@@ -25,53 +25,21 @@ class Path:
 
     def __init__(self):
 
-        # Get path to waypoints.csv
-        #dir_path = 'C:/Users/USER/Desktop/FullStanleyController/Ampera/data/waypoints.csv'
 
-        '''
-        #Guilherme
-        dir_path = 'C:/Users/USER/Desktop/FullStanleyController/Ampera/data/InfoKNMT.csv'
-        df = pd.read_csv(dir_path)
+        dir_path = 'data/InfoKNMT.csv'
+        dataframe = pd.read_csv(dir_path)
+        dataframe = dataframe[["Y", "X"]][:440]
 
-        df = df[["X", "Y"]][:440]
+        point_x, point_y = dataframe["Y"].multiply(
+            -1).tolist(), dataframe["X"].tolist()
+        points = np.array([point_x, point_y]).T
+        points = np.round_(points, decimals=3)
 
-        x, y = df["Y"].multiply(-1).tolist(), df["X"].tolist()
-
-        points = np.array([x,y]).T
-        points = np.round_(points, decimals = 3)
-
-        single_points = np.unique(points, axis = 0, return_index = True)
-        single_points = np.concatenate((single_points[0], single_points[1][:, None]), axis = 1)
-        single_points = single_points[single_points[:,2].argsort()]
-
-        x,y = zip(*single_points[:, :2])
-
-        tckp, u = interpolate.splprep([x,y], k=2)
-        x, y = interpolate.splev(np.linspace(0, 1, 1000), tckp)
-        trajet = np.concatenate((np.reshape(x, (10000, 1)), np.reshape(y, (10000, 1))), axis=1)
-        '''
-
-        '''
-        #ORIGINAL
-        dir_path = 'C:/Users/USER/Desktop/FullStanleyController/Ampera/data/waypoints.csv'
-        df = pd.read_csv(dir_path)
-
-        x = df['X-axis'].values
-        y = df['Y-axis'].values
-        #print(x)
-        #print(y)
-        '''
-
-        dir_path = 'C:/Users/USER/Desktop/FullStanleyController/Ampera/data/InfoKNMTmod3.csv'
-        df = pd.read_csv(dir_path)
-
-        df['X-axis'] = df['X-axis'].str.replace('\.','')
-        df['Y-axis'] = df['Y-axis'].str.replace('\.','')
-
-        df["X-axis"] = pd.to_numeric(df["X-axis"], errors = 'coerce')
-        df["Y-axis"] = pd.to_numeric(df["Y-axis"], errors = 'coerce')
-        x = df['X-axis'].values
-        y = df['Y-axis'].values
+        single_points = np.unique(points, axis=0, return_index=True)
+        single_points = np.concatenate(
+            (single_points[0], single_points[1][:, None]), axis=1)
+        single_points = single_points[single_points[:, 2].argsort()]
+        x, y = zip(*single_points[:, :2])
         ds = 0.05
 
         self.px, self.py, self.pyaw, _ = generate_cubic_spline(x, y, ds)
@@ -205,4 +173,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-    
