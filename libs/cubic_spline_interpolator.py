@@ -4,7 +4,7 @@ from math import atan2, atan, sin, pi
 
 from scipy.interpolate import CubicSpline
 
-def initialise_cubic_spline(x, y, ds, bc_type):
+def initialise_cubic_spline(x, y, ds, bc_type): #check
 
     distance = np.concatenate(([0], np.cumsum(np.hypot(np.ediff1d(x), np.ediff1d(y)))))
     s = np.arange(0, distance[-1], ds)
@@ -13,7 +13,7 @@ def initialise_cubic_spline(x, y, ds, bc_type):
 
     return cs, s
 
-def generate_cubic_spline(x, y, ds=0.05, bc_type='natural'):
+def generate_cubic_spline(x, y, ds=0.05, bc_type='natural'): #check
     
     cs, s = initialise_cubic_spline(x, y, ds, bc_type)
 
@@ -52,63 +52,20 @@ def main():
     import pandas as pd
     from matplotlib import pyplot as plt
 
-    '''
-    ORIGINAL
-    dir_path = 'C:/Users/USER/Desktop/FullStanleyController/Ampera/data/waypoints.csv'
-    df = pd.read_csv(dir_path)
+    dir_path = 'C:/Users/USER/Desktop/FullstanleyController/Ampera/data/InfoKNMT.csv'
+    dataframe = pd.read_csv(dir_path)
+    dataframe = dataframe[["Y", "X"]][:440]
 
-    x = df['X-axis'].values
-    y = df['Y-axis'].values
-    '''
+    point_x, point_y = dataframe["Y"].multiply(
+            -1).tolist(), dataframe["X"].tolist()
+    points = np.array([point_x, point_y]).T
+    points = np.round_(points, decimals=3)
 
-
-    dir_path = 'C:/Users/USER/Desktop/FullStanleyController/Ampera/data/InfoKNMTmod3.csv'
-    df = pd.read_csv(dir_path)
-
-    df['X-axis'] = df['X-axis'].str.replace('\.','')
-    df['Y-axis'] = df['Y-axis'].str.replace('\.','')
-
-    df["X-axis"] = pd.to_numeric(df["X-axis"], errors = 'coerce')
-    df["Y-axis"] = pd.to_numeric(df["Y-axis"], errors = 'coerce')
-
-    '''
-    #TESTE COM APENAS 40 DADOS
-    df2 = df.head(20)
-    print(df2)
-
-    x = df2['X-axis'].values
-    y = df2['Y-axis'].values
-    '''
-    x = df['X-axis'].values
-    y = df['Y-axis'].values
-    #wptypes = df.dtypes
-    #print(wptypes)
-    print(x)
-    print(y)
-    
-
-    '''
-    #Guilherme
-    dir_path = 'C:/Users/USER/Desktop/FullStanleyController/Ampera/data/InfoKNMT.csv'
-    df = pd.read_csv(dir_path)
-
-    df = df[["X", "Y"]][:440]
-
-    x, y = df["Y"].multiply(-1).tolist(), df["X"].tolist()
-
-    points = np.array([x,y]).T
-    points = np.round_(points, decimals = 3)
-
-    single_points = np.unique(points, axis = 0, return_index = True)
-    single_points = np.concatenate((single_points[0], single_points[1][:, None]), axis = 1)
-    single_points = single_points[single_points[:,2].argsort()]
-
-    x,y = zip(*single_points[:, :2])
-
-    tckp, u = interpolate.splprep([x,y], k=2)
-    x, y = interpolate.splev(np.linspace(0, 1, 1000), tckp)
-    trajet = np.concatenate((np.reshape(x, (10000, 1)), np.reshape(y, (10000, 1))), axis=1)
-    '''
+    single_points = np.unique(points, axis=0, return_index=True)
+    single_points = np.concatenate(
+            (single_points[0], single_points[1][:, None]), axis=1)
+    single_points = single_points[single_points[:, 2].argsort()]
+    x, y = zip(*single_points[:, :2])
 
     px, py = generate_cubic_path(x, y)
     pyaw = calculate_spline_yaw(x, y)

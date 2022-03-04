@@ -1,10 +1,36 @@
 import numpy as np
-
+from scipy.interpolate import CubicSpline
 from libs.normalise_angle import normalise_angle
+import pandas as pd
+
+def initialise_cubic_spline(x, y, ds, bc_type): #check
+
+    distance = np.concatenate(([0], np.cumsum(np.hypot(np.ediff1d(x), np.ediff1d(y)))))
+    s = np.arange(0, distance[-1], ds)
+    points = np.array([x, y]).T
+    cs = CubicSpline(distance, points, bc_type=bc_type, axis=0, extrapolate=False)
+
+    return cs, s
+
+def generate_cubic_spline(x, y, ds=0.05, bc_type='natural'): #check
+    
+    cs, s = initialise_cubic_spline(x, y, ds, bc_type)
+
+    # dx = dcs[0],  dy = dcs[1], ddx = ddcs[0],  ddy = ddcs[1]
+    dcs = cs.derivative(1)(s).T
+    yaw = np.arctan2(dcs[1], dcs[0])
+
+    ddcs = cs.derivative(2)(s).T
+    curvature = (ddcs[1]*dcs[0] - ddcs[0]*dcs[1]) / ((dcs[0]*dcs[0] + dcs[1]*dcs[1])**1.5)
+
+    cs_points = cs(s).T
+
+    return cs_points[0], cs_points[1], yaw, curvature
+
 
 class StanleyController:
 
-    def __init__(self, control_gain=2.5, softening_gain=1.0, yaw_rate_gain=0.0, steering_damp_gain=0.0, max_steer=np.deg2rad(24), wheelbase=0.00, path_x=None, path_y=None, path_yaw=None):
+    def __init__(self, control_gain=2.5, softening_gain=1.0, yaw_rate_gain=0.0, steering_damp_gain=0.0, max_steer=np.deg2rad(24), wheelbase=0.0, path_x=None, path_y=None, path_yaw=None):
         
         """
         Stanley Controller
@@ -101,9 +127,43 @@ class StanleyController:
 
         return limited_steering_angle, target_index, crosstrack_error
 
-def main():
 
-    print("This script is not meant to be executable, and should be used as a library.")
+class KinematicBicycleModel():
 
-if __name__ == "__main__":
-    main()
+    def __init__(self, L=2.5, dt=0.05):
+        """
+        2D Kinematic Bicycle Model
+
+        At initialisation
+        :param L:           (float) vehicle's wheelbase [m]
+        :param dt:          (float) discrete time period [s]
+
+        At every time step
+        :param x:           (float) vehicle's x-coordinate [m]
+        :param y:           (float) vehicle's y-coordinate [m]
+        :param yaw:         (float) vehicle's heading [rad]
+        :param v:           (float) vehicle's velocity in the x-axis [m/s]
+        :param delta:       (float) vehicle's steering angle [rad]
+
+        :return x:          (float) vehicle's x-coordinate [m]
+        :return y:          (float) vehicle's y-coordinate [m]
+        :return yaw:        (float) vehicle's heading [rad]
+        """
+
+        self.dt = dt
+        self.L = L
+
+    def kinematic_model(self, x, y, yaw, v, delta):
+
+        # Compute the state change rate
+        x_dot = v * np.cos(yaw)
+        y_dot = v * np.sin(yaw)
+        omega = v * np.tan(delta) / self.L
+
+        # Compute the final state using the discrete time model
+        x += x_dot * self.dt
+        y += y_dot * self.dt
+        yaw += omega * self.dt
+        yaw = normalise_angle(yaw)
+        
+        return x, y, yaw

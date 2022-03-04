@@ -26,7 +26,7 @@ class Path:
     def __init__(self):
 
 
-        dir_path = 'data/InfoKNMT.csv'
+        dir_path = 'C:/Users/USER/Desktop/FullstanleyController/Ampera/data/InfoKNMT.csv'
         dataframe = pd.read_csv(dir_path)
         dataframe = dataframe[["Y", "X"]][:440]
 
@@ -72,8 +72,8 @@ class Car:
         self.target_id = None
 
         # Description parameters
-        self.overall_length = 4.97
-        self.overall_width = 1.964
+        self.overall_length = 1.80
+        self.overall_width = 1.00
         self.tyre_diameter = 0.4826
         self.tyre_width = 0.2032
         self.axle_track = 1.662

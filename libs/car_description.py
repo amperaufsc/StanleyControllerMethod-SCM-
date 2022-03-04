@@ -103,12 +103,12 @@ def main():
     from matplotlib import pyplot as plt
 
     # Based on Tesla's model S 100D (https://www.car.info/en-se/tesla/model-s/model-s-100-kwh-awd-16457112/specs)
-    overall_length = 4.97
-    overall_width = 1.964
+    overall_length = 1.80
+    overall_width = 1.00
     tyre_diameter = 0.4826
     tyre_width = 0.2032
     axle_track = 1.662
-    wheelbase = 2.96
+    wheelbase = 2.50
     rear_overhang = (overall_length - wheelbase) / 2
     colour = 'black'
 

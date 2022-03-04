@@ -6,7 +6,7 @@ from libs.normalise_angle import normalise_angle
 
 class KinematicBicycleModel():
 
-    def __init__(self, L=1.0, dt=0.05):
+    def __init__(self, L=2.5, dt=0.05):
         """
         2D Kinematic Bicycle Model
 
