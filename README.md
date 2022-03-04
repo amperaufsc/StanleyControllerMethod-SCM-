@@ -34,7 +34,7 @@ print(matplotlib.__version__) #To see what is your version of Numpy in Python
 
 <details><summary>DESCRIÇÃO</summary>
   
-<p>
+
 ```python
 :param control_gain:                (float) time constant [1/s]
 :param softening_gain:              (float) softening gain [m/s]
@@ -56,7 +56,7 @@ print(matplotlib.__version__) #To see what is your version of Numpy in Python
 :return target_index:               (int) closest path index
 :return crosstrack_error:           (float) distance from closest path index [m]
 ```
-</p>
+
 </details>
 
 <hr>
