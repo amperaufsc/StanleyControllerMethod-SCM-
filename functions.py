@@ -1,7 +1,17 @@
 import numpy as np
 from scipy.interpolate import CubicSpline
-from libs.normalise_angle import normalise_angle
 import pandas as pd
+
+
+from math import atan2, sin, cos
+
+"""
+:param angle:       (float) angle [rad]
+
+:return angle:      (float) angle [rad]
+"""
+
+normalise_angle = lambda angle : atan2(sin(angle), cos(angle))
 
 def initialise_cubic_spline(x, y, ds, bc_type): #check
 

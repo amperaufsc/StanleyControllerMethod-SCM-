@@ -1,14 +1,17 @@
 import sys
 import time
 from trajectory import load_trajectory
-import fsds
+
 import numpy as np
 import math
 from functions import *
 
 
-fsds_lib_path = r"C:\Users\USER\Desktop\Formula-Student-Driverless-Simulator\python\fsds"
+#fsds_lib_path = r"C:\Users\USER\Desktop\Formula-Student-Driverless-Simulator\python\fsds"
+fsds_lib_path = os.path.join(os.path.expanduser("~"), "Formula-Student-Driverless-Simulator", "python")
 sys.path.insert(0, fsds_lib_path)
+
+import fsds
 
 # Frequencia em Hz
 frequency = 50
