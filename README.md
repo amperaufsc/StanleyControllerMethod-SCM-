@@ -9,9 +9,7 @@ import pandas as pd
 import numpy as np
 print(pandas.__version__) #To see what is your version of Pandas in Python
 print(numpy.__version__) #To see what is your version of Numpy in Python
-print(matplotlib.__version__) #To see what is your version of Numpy in Python
 ```
-#### MATPLOTLIB : 3.4.0
 #### PANDAS : 1.2.3
 #### NUMPY : 1.19.2
 </p>
@@ -19,14 +17,17 @@ print(matplotlib.__version__) #To see what is your version of Numpy in Python
 
 <hr>
 
-+ functions.py
-  - Contem as funções de controle do carro e calculos da trajetoria
++ SCM_Utils.py
+  - Contem as funções de controle do carro e calculos do steering_angle
 
-+ main_stanley_controller.py
-  - Comunica com o simulador utilizando as funções em functions.py
++ main_SCM.py
+  - Comunica com o simulador utilizando as funções em SCM_Utils.py
 
-+ trajectory.py
-  - Contem os waypoints da trajetoria
++ teste_funções.py
+  - Contém o teste completo iterativo de todas as funções para quantos pontos quiser testar
+
++ utils_OF.py
+  - Contém a função que pega o yaw do simulador
 
 <hr>
 
@@ -36,25 +37,43 @@ print(matplotlib.__version__) #To see what is your version of Numpy in Python
   
 
 ```python
-:param control_gain:                (float) time constant [1/s]
-:param softening_gain:              (float) softening gain [m/s]
-:param yaw_rate_gain:               (float) yaw rate gain [rad]
-:param steering_damp_gain:          (float) steering damp gain
-:param max_steer:                   (float) vehicle's steering limits [rad]
-:param wheelbase:                   (float) vehicle's wheelbase [m]
-:param px:                          (numpy.ndarray) list of x-coordinates along the path
-:param py:                          (numpy.ndarray) list of y-coordinates along the path
-:param pyaw:                        (numpy.ndarray) list of discrete yaw values along the path
-:param dt:                          (float) discrete time period [s]
-:param x:                           (float) vehicle's x-coordinate [m]
-:param y:                           (float) vehicle's y-coordinate [m]
-:param yaw:                         (float) vehicle's heading [rad]
-:param target_velocity:             (float) vehicle's velocity [m/s]
-:param steering_angle:              (float) vehicle's steering angle [rad]
+  
+#Na linha 27 de SMC_Utils.py lembre-se de trocar o path dos waypoints de acordo com o caminho na sua máquina
+dataframe = pd.read_csv("C:/.../InfoKNMT.csv")
 
-:return limited_steering_angle:     (float) steering angle after imposing steering limits [rad]
-:return target_index:               (int) closest path index
-:return crosstrack_error:           (float) distance from closest path index [m]
+#Na linha 11 de main_SCM.py lembre-se de trocar o path da pasta "fsds" de acordo com o caminho da sua máquina
+fsds_lib_path = r"C:\...\Formula-Student-Driverless-Simulator\python\fsds"
+  
+"""
+                Controller iteration code block.
+                Controller Feedback Variables:
+                    x                                        : Current X position (meters)
+                    y                                        : Current Y position (meters)
+                    yaw                                      : Current yaw pose (radians)
+                    v                                        : Current forward speed (meters per second)
+                    waypoints                                : Current waypoints to track
+                                                               Format: [[x0, y0],
+                                                                        [x1, y1],
+                                                                         ...
+                                                                        [xn, yn]]
+                                                               Example:
+                                                                       waypoints[2][1]:
+                                                                       Returns the 3rd waypoint's y position
+                                                                       waypoints[5]:
+                                                                       Returns [x5, y5] (6th waypoint)
+                Controller Output Variables:
+                                      lim_steering_angle    : Steer output (-1.22 rad to 1.22 rad)
+"""
+  
+func load_waypoints() : Pega o nosso .csv e trata os dados para que se torne um array (440,2) com as coordenadas x e y dos waypoints; 
+class Controller() : Define todas as funções a seguir e mantém armazenado todas as constantes do cálculo; 
+func get_distance() : Calcula a distância entre o waypoint i e o waypoint i+1; 
+func get_lookahead_point_index() : Nos diz em que posição do array estamos;
+func get_steering_direction() : Faz um produto vetorial para descobrir se o steering é negativo ou positivo; 
+func get_crosstrack_error() : Calcula a distância entre o waypoint mais próximo e a parte da frente do carro; 
+func get_heading_error() : Calcula o angulo entre a reta da trajetória e a reta do carro; 
+func calculate_steering() : A partir das duas funções acima, calcula o steering angle em RAD; 
+func set_steer() : Coloca o steering angle dentro dos limites.
 ```
 
 </details>
