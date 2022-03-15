@@ -61,7 +61,7 @@ class Controller(object):
             dis = self.get_distance(x, y, waypoints[i][0], waypoints[i][1])
             if abs(dis - lookahead_dis) <= self._eps_lookahead:
                 return i
-        return i
+        return len(waypoints) - 1
 
     def get_steering_direction(self, v1, v2):
         corss_prod = v1[0] * v2[1] - v1[1] * v2[0]

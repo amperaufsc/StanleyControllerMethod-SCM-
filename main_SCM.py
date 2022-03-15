@@ -1,12 +1,11 @@
-from SCM_Utils import Controller, load_waypoints
+from SCM_Utils_optimized import Controller, load_waypoints
+#from SCM_Utils import Controller, load_waypoints
 import fsds
 import sys
 import math
-import numpy as np
 from utils_OF import get_orientation
 import warnings
 warnings.filterwarnings("ignore")
-import pandas as pd
 
 fsds_lib_path = r"C:\Users\merte\Formula-Student-Driverless-Simulator\python\fsds" #exemplo do Mertens
 sys.path.insert(0, fsds_lib_path)
@@ -45,7 +44,7 @@ while True:
     pos_y = state.kinematics_estimated.position.x_val
     yaw = math.radians(get_orientation(state.kinematics_estimated.orientation))
 
-    steering_angle = controlador.calculate_steering(pos_x, pos_y, yaw, waypoints, velocity)
+    steering_angle = controlador.steering(pos_x, pos_y, yaw, waypoints, velocity)
     lim_steering_angle = controlador.set_steer(steering_angle)
     car_controls.steering = lim_steering_angle
     
